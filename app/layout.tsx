@@ -7,6 +7,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Porus Browser | Zero Bloat. Infinite Speed.",
   description: "The minimalist, privacy-first Android browser built for one-handed use.",
+  verification: {
+    google: "k1HPjIefxNhbnW18m7GHkUSXJ4ggpK08WLs4raNBfcY",
+  },
 };
 
 export default function RootLayout({
