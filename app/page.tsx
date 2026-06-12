@@ -11,14 +11,11 @@ export default function Home() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev % 5) + 1);
+      setCurrentSlide((prev) => (prev % 8) + 1);
     }, 3000);
     return () => clearInterval(timer);
   }, []);
-  const scrollToHero = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-    document.getElementById("hero")?.scrollIntoView({ behavior: "smooth" });
-  };
+
 
   return (
     <main className="min-h-screen relative overflow-hidden flex flex-col items-center">
@@ -34,8 +31,8 @@ export default function Home() {
             Porus
           </Link>
           <a
-            href="#hero"
-            onClick={scrollToHero}
+            href="/porus.apk"
+            download="porus.apk"
             className="text-sm font-medium transition-colors px-5 py-2.5 rounded-full bg-white/10 hover:bg-white/20"
           >
             Download APK
@@ -63,7 +60,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row w-full gap-4 max-w-md">
               <motion.a
                 href="/porus.apk"
-                download
+                download="porus.apk"
                 className="group relative flex items-center justify-center gap-3 w-full bg-white text-background font-semibold py-4 px-8 rounded-full overflow-hidden transition-transform"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
@@ -101,7 +98,7 @@ export default function Home() {
               {/* Inner bezel shadow */}
               <div className="absolute inset-0 z-20 pointer-events-none shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] rounded-[2.2rem]" />
               <div className="absolute inset-0 w-full h-full z-10">
-                {[1, 2, 3, 4, 5].map((num) => (
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
                   <motion.div
                     key={num}
                     className="absolute inset-0"
