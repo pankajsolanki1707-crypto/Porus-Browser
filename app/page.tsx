@@ -114,6 +114,24 @@ export default function Home() {
                 Indus Appstore <span className="text-[10px] uppercase ml-1 opacity-70">Soon</span>
               </button>
             </div>
+
+            <div className="mt-8 flex justify-start w-full max-w-md">
+              <a 
+                href="https://www.producthunt.com/products/porus-browser?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-porus-browser" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="transition-transform hover:scale-105 duration-200"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img 
+                  alt="Porus Browser - Zero-bloat Android browser built for one-handed use. | Product Hunt" 
+                  width="250" 
+                  height="54" 
+                  src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1169826&amp;theme=dark&amp;t=1781334256995"
+                  className="rounded-xl border border-white/10"
+                />
+              </a>
+            </div>
           </motion.div>
 
           <motion.div 
