@@ -1,21 +1,54 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Download, Play, LayoutGrid, Zap, Shield, Hand, Moon } from "lucide-react";
+import { Download, Play, Pause, Volume2, VolumeX, LayoutGrid, Zap, Shield, Hand, Moon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function Home() {
-  const [currentSlide, setCurrentSlide] = useState(1);
+  const screenshots = [
+    "/Screenshot_20260613_113335.png",
+    "/Screenshot_20260613_113422.png",
+    "/Screenshot_20260613_113444.png",
+    "/Screenshot_20260613_113519.png",
+    "/Screenshot_20260613_114308.png",
+    "/Screenshot_20260613_114320.png",
+    "/Screenshot_20260613_114334.png",
+    "/Screenshot_20260613_114352.png",
+    "/Screenshot_20260613_114403.png",
+    "/Screenshot_20260613_114425.png"
+  ];
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoPlaying, setVideoPlaying] = useState(true);
+  const [videoMuted, setVideoMuted] = useState(true);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev % 8) + 1);
+      setCurrentSlide((prev) => (prev + 1) % screenshots.length);
     }, 3000);
     return () => clearInterval(timer);
-  }, []);
+  }, [screenshots.length]);
 
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (videoPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play().catch((err) => console.log(err));
+      }
+      setVideoPlaying(!videoPlaying);
+    }
+  };
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoMuted;
+      setVideoMuted(!videoMuted);
+    }
+  };
 
   return (
     <main className="min-h-screen relative overflow-hidden flex flex-col items-center">
@@ -27,7 +60,7 @@ export default function Home() {
       <nav className="fixed top-0 left-0 right-0 z-50 glass border-x-0 border-t-0">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 text-2xl font-bold tracking-tighter text-white">
-            <Image src="/porus_logo.jpg" alt="Porus Logo" width={32} height={32} className="rounded-full shadow-lg shadow-black/50" />
+            <Image src="/2_logo.png" alt="Porus Logo" width={32} height={32} className="rounded-full shadow-lg shadow-black/50 object-cover" />
             Porus
           </Link>
           <a
@@ -90,33 +123,146 @@ export default function Home() {
             transition={{ duration: 1, delay: 0.2 }}
           >
             {/* Phone Mockup Carousel */}
-            <motion.div 
-              className="relative aspect-[9/19] w-full max-w-[320px] mx-auto rounded-[3rem] border-[12px] border-[#0a0a0a] bg-black overflow-hidden shadow-[0_20px_70px_-15px_rgba(255,153,51,0.4),_0_50px_100px_-20px_rgba(19,136,8,0.5)] ring-1 ring-white/10"
-              animate={{ y: [0, -20, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            >
-              {/* Inner bezel shadow */}
-              <div className="absolute inset-0 z-20 pointer-events-none shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] rounded-[2.2rem]" />
-              <div className="absolute inset-0 w-full h-full z-10">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                  <motion.div
-                    key={num}
-                    className="absolute inset-0"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: currentSlide === num ? 1 : 0 }}
-                    transition={{ duration: 0.8 }}
-                  >
-                    <Image
-                      src={`/slide${num}.png`}
-                      alt={`Porus Screenshot ${num}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </motion.div>
+            <div className="flex flex-col items-center">
+              <motion.div 
+                className="relative aspect-[9/19] w-full max-w-[320px] mx-auto rounded-[3rem] border-[12px] border-[#0a0a0a] bg-black overflow-hidden shadow-[0_20px_70px_-15px_rgba(255,153,51,0.4),_0_50px_100px_-20px_rgba(19,136,8,0.5)] ring-1 ring-white/10"
+                animate={{ y: [0, -20, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              >
+                {/* Inner bezel shadow */}
+                <div className="absolute inset-0 z-20 pointer-events-none shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] rounded-[2.2rem]" />
+                <div className="absolute inset-0 w-full h-full z-10">
+                  {screenshots.map((src, index) => (
+                    <motion.div
+                      key={index}
+                      className="absolute inset-0"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: currentSlide === index ? 1 : 0 }}
+                      transition={{ duration: 0.8 }}
+                    >
+                      <Image
+                        src={src}
+                        alt={`Porus Screenshot ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+              {/* Pagination Dots */}
+              <div className="flex justify-center flex-wrap gap-2 mt-6 max-w-[320px]">
+                {screenshots.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                      currentSlide === index ? "bg-saffron-orange w-6" : "bg-white/30 hover:bg-white/50"
+                    }`}
+                    aria-label={`Go to screenshot ${index + 1}`}
+                  />
                 ))}
               </div>
-            </motion.div>
+            </div>
           </motion.div>
+        </section>
+
+        {/* Screen Recording Section */}
+        <section id="demo" className="py-24 border-t border-white/5 relative">
+          {/* Subtle background glow for the demo section */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] bg-gradient-to-r from-saffron-orange/10 to-emerald-green/10 rounded-full blur-[120px] -z-10 pointer-events-none" />
+
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-16">
+            <motion.div 
+              className="flex-1 flex flex-col items-start"
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-6 leading-tight">
+                See <span className="text-gradient">Porus</span> in Action
+              </h2>
+              <p className="text-lg text-white/70 mb-8 max-w-xl leading-relaxed">
+                Experience the fluid animations, clean layout, and smart design that make Porus the ultimate mobile browsing experience.
+              </p>
+
+              {/* Feature Highlights with icons */}
+              <div className="space-y-6 w-full max-w-lg">
+                <div className="flex gap-4 items-start">
+                  <div className="p-3 rounded-2xl glass bg-white/5 border border-white/10 mt-1">
+                    <Hand className="w-5 h-5 text-saffron-orange" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-bold text-white mb-1">True One-Handed Control</h4>
+                    <p className="text-white/60 text-sm">All address controls, tabs, and menu access are concentrated at the very bottom where your thumb naturally rests.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <div className="p-3 rounded-2xl glass bg-white/5 border border-white/10 mt-1">
+                    <Shield className="w-5 h-5 text-emerald-green" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-bold text-white mb-1">Biometric Lock</h4>
+                    <p className="text-white/60 text-sm">Open the app securely with native fingerprint or face recognition, locking out prying eyes automatically.</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <div className="p-3 rounded-2xl glass bg-white/5 border border-white/10 mt-1">
+                    <Zap className="w-5 h-5 text-saffron-orange" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-bold text-white mb-1">Zero Bloat, Maximum Speed</h4>
+                    <p className="text-white/60 text-sm">No advertisements, news feed aggregators, or privacy-invading trackers to slow down your page loading speed.</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div 
+              className="flex-1 w-full max-w-md relative flex justify-center animate-fade-in"
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              {/* Video Phone Mockup */}
+              <div className="relative aspect-[9/19] w-full max-w-[320px] rounded-[3rem] border-[12px] border-[#0a0a0a] bg-black overflow-hidden shadow-[0_20px_70px_-15px_rgba(255,153,51,0.4),_0_50px_100px_-20px_rgba(19,136,8,0.5)] ring-1 ring-white/10 group/video">
+                {/* Inner bezel shadow */}
+                <div className="absolute inset-0 z-20 pointer-events-none shadow-[inset_0_0_20px_rgba(0,0,0,0.8)] rounded-[2.2rem]" />
+                <video
+                  ref={videoRef}
+                  src="/Screen_recording_20260613_115032.mp4"
+                  className="absolute inset-0 w-full h-full object-cover z-10"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                />
+                
+                {/* Custom Glass Overlay Controls */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-2.5 rounded-full border border-white/10 opacity-0 group-hover/video:opacity-100 transition-opacity duration-300">
+                  <button
+                    onClick={togglePlay}
+                    className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"
+                    title={videoPlaying ? "Pause" : "Play"}
+                  >
+                    {videoPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                  </button>
+                  <div className="w-[1px] h-4 bg-white/20" />
+                  <button
+                    onClick={toggleMute}
+                    className="p-2 hover:bg-white/10 rounded-full transition-colors text-white"
+                    title={videoMuted ? "Unmute" : "Mute"}
+                  >
+                    {videoMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
         </section>
 
         {/* Feature Bento Box */}
